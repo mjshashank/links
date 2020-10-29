@@ -1,0 +1,4 @@
+name = "snipp"
+type = "webpack"
+account_id = "d98f13584699f981217269a29e3e19e0"
+workers_dev = true

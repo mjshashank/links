@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>snipp.dev | URL Shortener</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/@ryangjchandler/alpine-clipboard@0.1.x/dist/alpine-clipboard.umd.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+      defer
+    ></script>
+    <script
+      src="https://kit.fontawesome.com/3b2a379312.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <a href=""><h2 class="title is-2">snipp.dev</h2></a>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <h2 class="title is-4 has-text-centered has-text-grey-dark">
+          A fast, free and easy URL shortener that tracks nothing.
+        </h2>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-2"></div>
+          <div
+            class="column is-8 "
+            x-data="{url:'', key: getDefaultKey(), ttl: '157680000', loading: false, success: '', error: ''}"
+          >
+            <div class="field">
+              <label class="label">URL</label>
+              <div class="control">
+                <input
+                  :class="[isValidURL(url) ? '' : 'is-danger']"
+                  class="input"
+                  type="url"
+                  placeholder="https://www.google.com/"
+                  x-model="url"
+                />
+                <p class="help is-danger" x-show="!isValidURL(url)">
+                  Invalid URL
+                </p>
+              </div>
+            </div>
+
+            <div class="columns">
+              <div class="column is-8">
+                <div class="field has-addons">
+                  <p class="control">
+                    <a
+                      class="button is-static is-left has-background-info-light has-text-weight-bold"
+                    >
+                      snipp.dev/
+                    </a>
+                  </p>
+                  <p class="control is-expanded">
+                    <input
+                      :class="[isValidKey(key) ? '' : 'is-danger']"
+                      class="input"
+                      type="text"
+                      placeholder="nice-pretty-name"
+                      x-model="key"
+                    />
+                  </p>
+                </div>
+                <p class="help is-danger" x-show="!isValidKey(key)">
+                  Invalid value. Allowed characters: A-Z a-z 0-9 - _
+                </p>
+              </div>
+              <div class="column is-4">
+                <div class="field has-addons">
+                  <p class="control">
+                    <a
+                      class="button is-static is-left has-background-danger-light has-text-weight-bold"
+                    >
+                      Expiry
+                    </a>
+                  </p>
+                  <div class="control is-expanded">
+                    <div class="select is-fullwidth">
+                      <select x-model="ttl">
+                        <option value="86400">1 day</option>
+                        <option value="2592000">1 month</option>
+                        <option value="31536000">1 year</option>
+                        <option value="157680000">5 years</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="control has-text-centered mt-6">
+              <button
+                class="button is-center is-fullwidth is-link is-outlined has-text-weight-bold"
+                :disabled="!url || !isValidURL(url) || !isValidKey(key) || loading"
+                @click="loading = true && create(key, url, ttl, loading).then((data) => {loading = false; error = ''; success = 'https://snipp.dev/' + data.key; error = ''}).catch((err) => {loading = false; error = err; success = ''})"
+              >
+                Create
+              </button>
+            </div>
+            <template x-if="success"
+              ><div class="mt-6">
+                <article class="message is-expanded is-success">
+                  <div
+                    class="message-body"
+                    style="display: flex; justify-content: center; align-items: center;"
+                  >
+                    <p x-text="success" class="ml-3 mr-3"></p>
+                    <button
+                      @click="$clipboard(success)"
+                      class="button is-outlined is-small"
+                    >
+                      <span class="icon is-small">
+                        <i class="far fa-copy"></i>
+                      </span>
+                    </button>
+                  </div>
+                </article></div
+            ></template>
+            <template x-if="error"
+              ><div class="mt-6">
+                <article class="message is-expanded is-danger">
+                  <div class="message-body has-text-centered">
+                    <p x-text="error"></p>
+                  </div>
+                </article></div
+            ></template>
+          </div>
+          <div class="column is-2"></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container has-text-centered">
+        <a href="https://github.com/mjshashank/snipp" style="color: #363636;">
+          <span class="icon is-large">
+            <i class="fab fa-github fa-2x"></i>
+          </span>
+        </a>
+      </div>
+    </section>
+    <script type="text/javascript">
+      function getDefaultKey() {
+        let result = "";
+        let characters =
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (let i = 0; i < 12; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * characters.length)
+          );
+        }
+        return result;
+      }
+      function isValidURL(url) {
+        if (!url) return true;
+        try {
+          new URL(url);
+          return true;
+        } catch (err) {
+          return false;
+        }
+      }
+      function isValidKey(key) {
+        return !key || /^[a-zA-Z0-9-_]+$/.test(key);
+      }
+      function create(key, value, ttl) {
+        return new Promise((resolve, reject) => {
+          fetch("https://snipp.dev/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ key, value, ttl }),
+          })
+            .then((response) => response.json())
+            .then((result) => {
+              if (!result.error) return resolve(result);
+              reject(result.error);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              reject(error);
+            });
+        });
+      }
+    </script>
+  </body>
+</html>

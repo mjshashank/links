@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "name": "snipp",
+  "version": "1.0.0",
+  "description": "snipp",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write '**/*.{js,css,json,md}'"
+  },
+  "author": "M J Shashank <iamshashankmj@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^1.0.0-gamma.10",
+    "nanoid": "^3.1.16"
+  }
+}
